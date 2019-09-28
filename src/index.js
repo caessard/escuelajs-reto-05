@@ -7,6 +7,7 @@ const getData = api => {
     .then(response => response.json())
     .then(response => {
       const characters = response.results;
+      localStorage.setItem('next_fetch', response.info.next)
       let output = characters.map(character => {
         return `
       <article class="Card">
