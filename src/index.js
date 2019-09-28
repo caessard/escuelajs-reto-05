@@ -7,6 +7,9 @@ const getData = api => {
     .then(response => response.json())
     .then(response => {
       const characters = response.results;
+      if(response.info.next === null){
+        localStorage.removeItem('key')
+      }
       localStorage.setItem('next_fetch', response.info.next)
       let output = characters.map(character => {
         return `
@@ -25,7 +28,14 @@ const getData = api => {
 }
 
 const loadData = () => {
-  getData(API);
+  
+  if('next_fetch' in localStorage) {
+    let next_fetch = localStorage.getItem('next_fetch')
+    getData(next_fetch)
+  } else {
+    getData(API)
+  }
+  
 }
 
 const intersectionObserver = new IntersectionObserver(entries => {
