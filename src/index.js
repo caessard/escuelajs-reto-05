@@ -41,10 +41,9 @@ const loadData = async () =>  {
 }
 
 const intersectionObserver = new IntersectionObserver(entries => {
-  debugger
-  if (entries[0].isIntersecting && 'last_page' in localStorage && !localStorage.getItem('last_page')) {
+  if (entries[0].isIntersecting && !localStorage.getItem('last_page')) {
     loadData();
-  } else {
+  } else if (localStorage.getItem('last_page')) {
     let newItem = document.createElement('h1');
     newItem.innerHTML = 'Ya no hay personajes';
     $app.appendChild(newItem);
@@ -55,7 +54,6 @@ const intersectionObserver = new IntersectionObserver(entries => {
 
 intersectionObserver.observe($observe);
 
-if (sessionStorage.getItem("is_reloaded")) {
-  localStorage.removeItem('next_fetch')
-  localStorage.removeItem('last_page')
-}
+window.addEventListener('beforeunload', event => {
+  localStorage.clear()
+})
