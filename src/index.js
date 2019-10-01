@@ -47,6 +47,7 @@ const intersectionObserver = new IntersectionObserver(entries => {
     let newItem = document.createElement('h1');
     newItem.innerHTML = 'Ya no hay personajes';
     $app.appendChild(newItem);
+    intersectionObserver.disconnect()
   }
 }, {
   rootMargin: '0px 0px 100% 0px',
