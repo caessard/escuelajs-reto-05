@@ -7,8 +7,9 @@ const getData = api => {
     .then(response => response.json())
     .then(response => {
       const characters = response.results;
-      if(response.info.next === null){
-        localStorage.removeItem('key')
+      if(response.info.next === ''){
+        localStorage.removeItem('next_fetch')
+        localStorage.setItem('last_page', true)
       }
       localStorage.setItem('next_fetch', response.info.next)
       let output = characters.map(character => {
@@ -27,23 +28,34 @@ const getData = api => {
     .catch(error => console.log(error));
 }
 
-const loadData = () => {
-  
+/**
+ * Works the async - await in that function but I think is not a correct implementation in loadData
+ */
+const loadData = async () =>  {
   if('next_fetch' in localStorage) {
     let next_fetch = localStorage.getItem('next_fetch')
-    getData(next_fetch)
+    await getData(next_fetch) 
   } else {
-    getData(API)
+    await getData(API)
   }
-  
 }
 
 const intersectionObserver = new IntersectionObserver(entries => {
-  if (entries[0].isIntersecting) {
+  debugger
+  if (entries[0].isIntersecting && 'last_page' in localStorage && !localStorage.getItem('last_page')) {
     loadData();
+  } else {
+    let newItem = document.createElement('h1');
+    newItem.innerHTML = 'Ya no hay personajes';
+    $app.appendChild(newItem);
   }
 }, {
   rootMargin: '0px 0px 100% 0px',
 });
 
 intersectionObserver.observe($observe);
+
+if (sessionStorage.getItem("is_reloaded")) {
+  localStorage.removeItem('next_fetch')
+  localStorage.removeItem('last_page')
+}
